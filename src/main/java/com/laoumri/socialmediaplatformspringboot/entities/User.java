@@ -60,6 +60,7 @@ public class User implements UserDetails {
     }
 
     @Override
+    @SuppressWarnings("SonarQube")
     public String getUsername() {
         return this.email;
     }
@@ -69,7 +70,5 @@ public class User implements UserDetails {
         return this.password;
     }
 
-    public String getUserIdentifier() {
-        return this.username;
-    }
+
 }
