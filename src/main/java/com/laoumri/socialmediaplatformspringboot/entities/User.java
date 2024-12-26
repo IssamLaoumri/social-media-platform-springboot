@@ -6,7 +6,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -21,7 +20,8 @@ public class User implements UserDetails {
     private Long id;
 
     @Column(unique = true, nullable = false)
-    private String _username;
+    @Getter(AccessLevel.NONE) @Setter(AccessLevel.NONE)
+    private String username;
 
     @Column(nullable = false)
     private String firstname;
@@ -67,5 +67,9 @@ public class User implements UserDetails {
     @Override
     public String getPassword() {
         return this.password;
+    }
+
+    public String getUserIdentifier() {
+        return this.username;
     }
 }

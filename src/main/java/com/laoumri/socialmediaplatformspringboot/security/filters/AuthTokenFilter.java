@@ -44,8 +44,6 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     }
 
     private String parseJwt(HttpServletRequest request) {
-        String jwt = jwtUtils.getJwtTokenFromCookie(request);
-        System.out.println(jwt);
-        return jwt;
+        return jwtUtils.getJwtTokenFromCookie(request);
     }
 }

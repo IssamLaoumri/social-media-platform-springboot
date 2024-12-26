@@ -1,6 +1,6 @@
 package com.laoumri.socialmediaplatformspringboot.controllers;
 
-import com.laoumri.socialmediaplatformspringboot.Services.UserService;
+import com.laoumri.socialmediaplatformspringboot.services.UserService;
 import com.laoumri.socialmediaplatformspringboot.dto.requests.SigninRequest;
 import com.laoumri.socialmediaplatformspringboot.dto.requests.SignupRequest;
 import com.laoumri.socialmediaplatformspringboot.dto.responses.AuthResponse;

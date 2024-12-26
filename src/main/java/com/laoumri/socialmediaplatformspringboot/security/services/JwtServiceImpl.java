@@ -49,7 +49,7 @@ public class JwtServiceImpl implements JwtService{
     @Override
     public ResponseCookie generateJwtCookie(User user) {
         String jwt = generateJwtTokenFromEmail(user.getUsername());
-        return ResponseCookie.from(jwtCookie, jwt).path("/api").maxAge(24 * 60 * 60).httpOnly(true).build();
+        return ResponseCookie.from(jwtCookie, jwt).path("/api").maxAge((long) 24 * 60 * 60).httpOnly(true).build();
     }
 
     @Override

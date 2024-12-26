@@ -1,4 +1,4 @@
-package com.laoumri.socialmediaplatformspringboot.Services;
+package com.laoumri.socialmediaplatformspringboot.services;
 
 import com.laoumri.socialmediaplatformspringboot.dto.requests.SignupRequest;
 import com.laoumri.socialmediaplatformspringboot.entities.User;

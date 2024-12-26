@@ -1,4 +1,4 @@
-package com.laoumri.socialmediaplatformspringboot.Services;
+package com.laoumri.socialmediaplatformspringboot.services;
 
 import com.laoumri.socialmediaplatformspringboot.dto.requests.SignupRequest;
 import com.laoumri.socialmediaplatformspringboot.entities.Role;
@@ -57,7 +57,7 @@ public class UserServiceImpl implements UserService{
                 .bYear(request.getBYear())
                 .gender(request.getGender())
                 .roles(roles)
-                ._username("issam")
+                .username("issam")
                 .build();
 
         return userRepository.save(user);
