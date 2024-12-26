@@ -27,7 +27,7 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public User createNewUser(SignupRequest request) {
-        if(userRepository.existsByEmail(request.getEmail()))
+        if(userRepository.existsByUsername(request.getEmail()))
             throw new EmailALreadyExistsException("Email : "+request.getEmail()+" already exists");
 
         Set<Role> roles = new HashSet<>();
@@ -50,14 +50,14 @@ public class UserServiceImpl implements UserService{
         User user = User.builder()
                 .firstname(request.getFirstname())
                 .lastname(request.getLastname())
-                .email(request.getEmail())
+                .username(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .bDay(request.getBDay())
                 .bMonth(request.getBMonth())
                 .bYear(request.getBYear())
                 .gender(request.getGender())
                 .roles(roles)
-                .username("issam")
+                .userIdentifier("issam")
                 .build();
 
         return userRepository.save(user);
@@ -65,7 +65,7 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public User getUserByEmail(String email) {
-        return userRepository.findByEmail(email).orElseThrow(()->
+        return userRepository.findByUsername(email).orElseThrow(()->
                 new UserNotFoundException("User not found with email : "+email)
         );
     }

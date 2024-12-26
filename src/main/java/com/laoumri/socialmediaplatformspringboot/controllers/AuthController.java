@@ -38,7 +38,7 @@ public class AuthController {
     public ResponseEntity<MessageResponse> signup(@RequestBody @Valid SignupRequest request) {
         User user = userService.createNewUser(request);
         SigninRequest signinRequest = new SigninRequest();
-        signinRequest.setEmail(user.getEmail());
+        signinRequest.setEmail(user.getUsername());
         signinRequest.setPassword(request.getPassword());
         return signin(signinRequest); // Intentional for auto-login
     }
@@ -60,7 +60,7 @@ public class AuthController {
         AuthResponse response = AuthResponse.builder()
                 .firstname(loggedInUser.getFirstname())
                 .lastname(loggedInUser.getLastname())
-                .email(loggedInUser.getEmail())
+                .email(loggedInUser.getUsername())
                 .bYear(loggedInUser.getBYear())
                 .bMonth(loggedInUser.getBMonth())
                 .bDay(loggedInUser.getBDay())

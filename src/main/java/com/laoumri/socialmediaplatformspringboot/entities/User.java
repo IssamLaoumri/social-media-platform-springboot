@@ -19,9 +19,8 @@ public class User implements UserDetails {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)
-    @Getter(AccessLevel.NONE) @Setter(AccessLevel.NONE)
-    private String username;
+    @Column(name = "username", unique = true, nullable = false)
+    private String userIdentifier;
 
     @Column(nullable = false)
     private String firstname;
@@ -29,8 +28,8 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String lastname;
 
-    @Column(unique = true, nullable = false)
-    private String email;
+    @Column(name = "email", unique = true, nullable = false)
+    private String username;
 
     @Column(nullable = false)
     private String password;
@@ -60,15 +59,12 @@ public class User implements UserDetails {
     }
 
     @Override
-    @SuppressWarnings("SonarQube")
     public String getUsername() {
-        return this.email;
+        return this.username;
     }
 
     @Override
     public String getPassword() {
         return this.password;
     }
-
-
 }
