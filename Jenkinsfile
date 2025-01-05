@@ -2,11 +2,27 @@ pipeline {
     agent any
     tools {
         maven 'maven'
+        jdk 'JDK 17'
     }
     stages {
+        stage('Clean Workspace') {
+            steps {
+                cleanWs()
+            }
+        }
         stage('Checkout') {
             steps {
                 checkout scm
+            }
+        }
+        stage('Debug Workspace') {
+            steps {
+                sh 'ls -R'
+            }
+        }
+        stage('Resolve Dependencies') {
+            steps {
+                sh 'mvn dependency:resolve'
             }
         }
         stage('Unit Tests') {
@@ -33,7 +49,8 @@ pipeline {
                         -Dsonar.projectKey=social_media_plateform_springboot \
                         -Dsonar.projectName='social_media_plateform_springboot' \
                         -Dsonar.java.binaries=target/classes
-                    """                }
+                    """
+                }
             }
         }
     }
