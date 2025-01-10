@@ -5,6 +5,7 @@ import lombok.*;
 import org.springframework.http.HttpStatus;
 
 import java.time.Instant;
+import java.util.List;
 
 @Builder
 @Setter
@@ -15,7 +16,7 @@ public class ErrorResponse {
     private Integer statusCode;
     private HttpStatus status;
     private String reason;
-    private String message;
+    private List<String> message;
     private ErrorCode errorCode;
 
     private Instant timestamp;

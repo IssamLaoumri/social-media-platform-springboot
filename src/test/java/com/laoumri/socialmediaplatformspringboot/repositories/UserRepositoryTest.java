@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 
 @DataJpaTest
-public class UserRepositoryTest {
+class UserRepositoryTest {
     @Autowired
     UserRepository userRepository;
 
@@ -39,7 +39,7 @@ public class UserRepositoryTest {
     @Test
     void shouldReturnOptionalUser_whenEmailIsGiven(){
         Optional<User> returnedUser = userRepository.findByUsername(USER_ISSAM.getUsername());
-        assertThat(returnedUser.isPresent()).isTrue();
+        assertThat(returnedUser).isPresent();
     }
 
     @Test

@@ -4,7 +4,6 @@ import com.laoumri.socialmediaplatformspringboot.dto.requests.SignupRequest;
 import com.laoumri.socialmediaplatformspringboot.entities.Role;
 import com.laoumri.socialmediaplatformspringboot.entities.User;
 import com.laoumri.socialmediaplatformspringboot.enums.ERole;
-import com.laoumri.socialmediaplatformspringboot.exceptions.EmailALreadyExistsException;
 import com.laoumri.socialmediaplatformspringboot.repositories.RoleRepository;
 import com.laoumri.socialmediaplatformspringboot.repositories.UserRepository;
 import com.laoumri.socialmediaplatformspringboot.shared.MockResource;
@@ -31,7 +30,7 @@ import static org.mockito.Mockito.when;
  */
 
 @DataJpaTest
-public class UserServiceTest {
+class UserServiceTest {
     @InjectMocks
     UserServiceImpl userService;
 
@@ -57,8 +56,7 @@ public class UserServiceTest {
         when(userRepository.findByUsername(USER_ISSAM.getUsername())).thenReturn(Optional.of(USER_ISSAM));
         User returnedUser = userService.getUserByEmail(USER_ISSAM.getUsername());
 
-        assertThat(returnedUser).isNotNull();
-        assertThat(returnedUser).isEqualTo(USER_ISSAM);
+        assertThat(returnedUser).isNotNull().isEqualTo(USER_ISSAM);
     }
 
     @Test

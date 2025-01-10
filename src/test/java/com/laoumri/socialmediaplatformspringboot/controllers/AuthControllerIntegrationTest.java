@@ -8,6 +8,7 @@ import com.laoumri.socialmediaplatformspringboot.entities.User;
 import com.laoumri.socialmediaplatformspringboot.repositories.RoleRepository;
 import com.laoumri.socialmediaplatformspringboot.repositories.UserRepository;
 import com.laoumri.socialmediaplatformspringboot.shared.MockResource;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -94,6 +95,29 @@ public class AuthControllerIntegrationTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.email").value("issam@issamlaoumri.com"));
+    }
+
+    @Test
+    void shouldReturnValidationErrors() throws Exception {
+        SignupRequest request = SignupRequest.builder()
+                .firstname("i")
+                .lastname("l")
+                .email("issamlaoumri.com")
+                .password("I123!abc@cBa")
+                .bDay(1)
+                .bMonth(2)
+                .bYear(1990)
+                .gender("MALE")
+                .build();
+        String requestJson = mapper.writeValueAsString(request);
+        mockMvc.perform(post(API_URL_PREFIX + "/signup")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding("utf-8")
+                        .content(requestJson)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").isNotEmpty())
+                .andExpect(jsonPath("$.message.length()").value(Matchers.greaterThanOrEqualTo(3)));
     }
 
     @Test
