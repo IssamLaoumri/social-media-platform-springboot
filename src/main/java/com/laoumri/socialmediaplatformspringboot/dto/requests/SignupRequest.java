@@ -1,5 +1,6 @@
 package com.laoumri.socialmediaplatformspringboot.dto.requests;
 
+import com.laoumri.socialmediaplatformspringboot.enums.EGender;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -30,7 +31,7 @@ public class SignupRequest {
 
     private int bYear;
 
-    private String gender;
+    private EGender gender;
 
     private Set<String> roles;
 }

@@ -1,5 +1,6 @@
 package com.laoumri.socialmediaplatformspringboot.entities;
 
+import com.laoumri.socialmediaplatformspringboot.enums.EGender;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -43,7 +44,8 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private int bYear;
 
-    private String gender;
+    @Enumerated(EnumType.STRING)
+    private EGender gender;
 
     // Relationships
     @ManyToMany(fetch = FetchType.EAGER)

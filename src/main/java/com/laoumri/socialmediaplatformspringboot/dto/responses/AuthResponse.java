@@ -1,5 +1,6 @@
 package com.laoumri.socialmediaplatformspringboot.dto.responses;
 
+import com.laoumri.socialmediaplatformspringboot.enums.EGender;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,6 +24,6 @@ public class AuthResponse {
     private int bDay;
     private int bMonth;
     private int bYear;
-    private String gender;
+    private EGender gender;
     private List<String> roles;
 }

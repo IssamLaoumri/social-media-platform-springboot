@@ -2,6 +2,7 @@ package com.laoumri.socialmediaplatformspringboot.shared;
 
 import com.laoumri.socialmediaplatformspringboot.entities.Role;
 import com.laoumri.socialmediaplatformspringboot.entities.User;
+import com.laoumri.socialmediaplatformspringboot.enums.EGender;
 import com.laoumri.socialmediaplatformspringboot.enums.ERole;
 
 import java.util.Set;
@@ -24,6 +25,7 @@ public class MockResource {
                 .bYear(1990)
                 .userIdentifier("issam.laoumri")
                 .roles(Set.of(getRoleUser()))
+                .gender(EGender.MALE)
                 .build();
     }
     public static Role getRoleUser(){
