@@ -5,6 +5,7 @@ import com.laoumri.socialmediaplatformspringboot.dto.requests.SigninRequest;
 import com.laoumri.socialmediaplatformspringboot.dto.requests.SignupRequest;
 import com.laoumri.socialmediaplatformspringboot.entities.Role;
 import com.laoumri.socialmediaplatformspringboot.entities.User;
+import com.laoumri.socialmediaplatformspringboot.enums.EGender;
 import com.laoumri.socialmediaplatformspringboot.repositories.RoleRepository;
 import com.laoumri.socialmediaplatformspringboot.repositories.UserRepository;
 import com.laoumri.socialmediaplatformspringboot.shared.MockResource;
@@ -84,7 +85,7 @@ public class AuthControllerIntegrationTest {
                 .bDay(1)
                 .bMonth(2)
                 .bYear(1990)
-                .gender("MALE")
+                .gender(EGender.MALE)
                 .build();
         String requestJson = mapper.writeValueAsString(request);
 
@@ -107,7 +108,7 @@ public class AuthControllerIntegrationTest {
                 .bDay(1)
                 .bMonth(2)
                 .bYear(1990)
-                .gender("MALE")
+                .gender(EGender.MALE)
                 .build();
         String requestJson = mapper.writeValueAsString(request);
         mockMvc.perform(post(API_URL_PREFIX + "/signup")
