@@ -57,7 +57,7 @@ public class AuthController {
         User loggedInUser = userService.getUserByEmail(request.getEmail());
         ResponseCookie jwtCookie = jwtService.generateJwtCookie(loggedInUser);
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(loggedInUser.getId());
-        ResponseCookie jwtRefreshToken = jwtService.generateJwtRefreshCookie(refreshToken.getRefreshToken());
+        ResponseCookie jwtRefreshToken = jwtService.generateJwtRefreshCookie(refreshToken.getToken());
 
         List<String> roles = loggedInUser.getRoles()
                 .stream()

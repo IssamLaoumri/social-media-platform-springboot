@@ -4,6 +4,7 @@ import com.laoumri.socialmediaplatformspringboot.entities.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SecurityException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -73,19 +74,22 @@ public class JwtServiceImpl implements JwtService{
     }
 
     public ResponseCookie getCleanJwtCookie() {
-        return ResponseCookie.from(jwtCookie, null).path("/api").build();
+        return ResponseCookie.from(jwtCookie, "").path("/api").build();
     }
 
     public ResponseCookie getCleanJwtRefreshCookie() {
-        return ResponseCookie.from(jwtRefreshCookie, null).path("/api/v1/auth/refreshtoken").build();
+        return ResponseCookie.from(jwtRefreshCookie, "").path("/api/v1/auth/refreshtoken").build();
     }
 
     @Override
     public boolean isTokenValid(String token) {
         try {
-            Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
+            Jwts.parserBuilder()
+                    .setSigningKey(key())
+                    .build()
+                    .parseClaimsJws(token);
             return true;
-        } catch (SignatureException e) {
+        } catch (SecurityException e) {
             log.error("Invalid JWT signature: {}", e.getMessage());
         } catch (MalformedJwtException e) {
             log.error("Invalid JWT token: {}", e.getMessage());

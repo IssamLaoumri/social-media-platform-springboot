@@ -1,7 +1,9 @@
 package com.laoumri.socialmediaplatformspringboot.services;
 
 import com.laoumri.socialmediaplatformspringboot.entities.RefreshToken;
+import com.laoumri.socialmediaplatformspringboot.entities.User;
 import com.laoumri.socialmediaplatformspringboot.exceptions.TokenRefreshException;
+import com.laoumri.socialmediaplatformspringboot.exceptions.UserNotFoundException;
 import com.laoumri.socialmediaplatformspringboot.repositories.RefreshTokenRepository;
 import com.laoumri.socialmediaplatformspringboot.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +32,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
     @Override
     public Optional<RefreshToken> findByToken(String token) {
-        return refreshTokenRepository.findByRefreshToken(token);
+        return refreshTokenRepository.findByToken(token);
     }
 
     @Override
@@ -45,7 +47,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
         refreshToken.setUser(userRepository.findById(userId).get());
         refreshToken.setExpiresAt(Instant.now().plusMillis(refreshExpirationMS));
-        refreshToken.setRefreshToken(UUID.randomUUID().toString());
+        refreshToken.setToken(UUID.randomUUID().toString());
 
         refreshToken = refreshTokenRepository.save(refreshToken);
         return refreshToken;
@@ -55,7 +57,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     public RefreshToken verifyExpiration(RefreshToken token) {
         if (token.getExpiresAt().compareTo(Instant.now()) < 0) {
             refreshTokenRepository.delete(token);
-            throw new TokenRefreshException(token.getRefreshToken(), "Refresh token was expired. Please make a new signin request");
+            throw new TokenRefreshException(token.getToken(), "Refresh token was expired. Please make a new signin request");
         }
 
         return token;
@@ -64,6 +66,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     @Transactional
     @Override
     public void deleteByUserId(Long userId) {
-        refreshTokenRepository.deleteByUser(userRepository.findById(userId).get());
+        User user = userRepository.findById(userId).orElseThrow(()-> new UserNotFoundException("user not found with id: "+userId));
+        refreshTokenRepository.deleteByUser(user);
     }
 }
