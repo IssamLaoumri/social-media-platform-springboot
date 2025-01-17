@@ -5,4 +5,5 @@ public enum ErrorCode {
     USER_NOT_FOUND,
     ROLE_NOT_FOUND,
     VALIDATION_ERROR,
+    REFRESH_TOKEN_EXPIRED,
 }

@@ -4,6 +4,7 @@ import com.laoumri.socialmediaplatformspringboot.dto.responses.ErrorResponse;
 import com.laoumri.socialmediaplatformspringboot.enums.ErrorCode;
 import com.laoumri.socialmediaplatformspringboot.exceptions.EmailALreadyExistsException;
 import com.laoumri.socialmediaplatformspringboot.exceptions.RoleNotFoundException;
+import com.laoumri.socialmediaplatformspringboot.exceptions.TokenRefreshException;
 import com.laoumri.socialmediaplatformspringboot.exceptions.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -51,5 +52,10 @@ public class CustomExceptionHandler {
     @ExceptionHandler(RoleNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleRoleNotFoundException(final RoleNotFoundException ex){
         return buildErrorResponse(HttpStatus.NOT_FOUND, List.of(ex.getMessage()), ErrorCode.ROLE_NOT_FOUND);
+    }
+
+    @ExceptionHandler(TokenRefreshException.class)
+    public ResponseEntity<ErrorResponse> handleTokenRefreshException(final TokenRefreshException ex){
+        return buildErrorResponse(HttpStatus.FORBIDDEN, List.of(ex.getMessage()), ErrorCode.REFRESH_TOKEN_EXPIRED);
     }
 }

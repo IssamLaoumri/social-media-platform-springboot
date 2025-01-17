@@ -34,6 +34,8 @@ public interface JwtService {
      */
     ResponseCookie generateJwtCookie(User user);
 
+    ResponseCookie generateJwtRefreshCookie(String refreshToken);
+
     /**
      * Extracts the email address from a given JWT token.
      *
@@ -41,6 +43,11 @@ public interface JwtService {
      * @return the email address included in the token as a claim.
      */
     String getEmailFromJwtToken(String token);
+
+    String getJwtFromCookies(HttpServletRequest request);
+    String getJwtRefreshFromCookies(HttpServletRequest request);
+    ResponseCookie getCleanJwtCookie();
+    ResponseCookie getCleanJwtRefreshCookie();
 
     /**
      * Validates a JWT token to ensure it is properly signed and not expired.

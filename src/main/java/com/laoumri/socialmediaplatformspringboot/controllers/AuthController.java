@@ -1,13 +1,17 @@
 package com.laoumri.socialmediaplatformspringboot.controllers;
 
-import com.laoumri.socialmediaplatformspringboot.services.UserService;
 import com.laoumri.socialmediaplatformspringboot.dto.requests.SigninRequest;
 import com.laoumri.socialmediaplatformspringboot.dto.requests.SignupRequest;
 import com.laoumri.socialmediaplatformspringboot.dto.responses.AuthResponse;
 import com.laoumri.socialmediaplatformspringboot.dto.responses.MessageResponse;
+import com.laoumri.socialmediaplatformspringboot.entities.RefreshToken;
 import com.laoumri.socialmediaplatformspringboot.entities.User;
 import com.laoumri.socialmediaplatformspringboot.enums.InfoCode;
+import com.laoumri.socialmediaplatformspringboot.exceptions.TokenRefreshException;
 import com.laoumri.socialmediaplatformspringboot.security.services.JwtService;
+import com.laoumri.socialmediaplatformspringboot.services.RefreshTokenService;
+import com.laoumri.socialmediaplatformspringboot.services.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -33,6 +37,7 @@ public class AuthController {
     private final UserService userService;
     private final AuthenticationManager authManager;
     private final JwtService jwtService;
+    private final RefreshTokenService refreshTokenService;
 
     @PostMapping("/signup")
     public ResponseEntity<MessageResponse> signup(@RequestBody @Valid SignupRequest request) {
@@ -50,7 +55,9 @@ public class AuthController {
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
         User loggedInUser = userService.getUserByEmail(request.getEmail());
-        ResponseCookie cookie = jwtService.generateJwtCookie(loggedInUser);
+        ResponseCookie jwtCookie = jwtService.generateJwtCookie(loggedInUser);
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(loggedInUser.getId());
+        ResponseCookie jwtRefreshToken = jwtService.generateJwtRefreshCookie(refreshToken.getRefreshToken());
 
         List<String> roles = loggedInUser.getRoles()
                 .stream()
@@ -72,7 +79,47 @@ public class AuthController {
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                .header(HttpHeaders.SET_COOKIE, jwtRefreshToken.toString())
                 .body(message);
     }
+
+    @PostMapping("/signout")
+    public ResponseEntity<?> logoutUser() {
+        Object principle = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principle.toString() != "anonymousUser") {
+            Long userId = ((User) principle).getId();
+            refreshTokenService.deleteByUserId(userId);
+        }
+
+        ResponseCookie jwtCookie = jwtService.getCleanJwtCookie();
+        ResponseCookie jwtRefreshCookie = jwtService.getCleanJwtRefreshCookie();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                .header(HttpHeaders.SET_COOKIE, jwtRefreshCookie.toString())
+                .body(new MessageResponse(InfoCode.SIGNED_OUT, Instant.now(), "You've been signed out!"));
+    }
+
+    @PostMapping("/refreshtoken")
+    public ResponseEntity<?> refreshtoken(HttpServletRequest request) {
+        String refreshToken = jwtService.getJwtRefreshFromCookies(request);
+
+        if ((refreshToken != null) && (!refreshToken.isEmpty())) {
+            return refreshTokenService.findByToken(refreshToken)
+                    .map(refreshTokenService::verifyExpiration)
+                    .map(RefreshToken::getUser)
+                    .map(user -> {
+                        ResponseCookie jwtCookie = jwtService.generateJwtCookie(user);
+
+                        return ResponseEntity.ok()
+                                .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                                .body(new MessageResponse(InfoCode.TOKEN_REFRESH_SUCCESS, Instant.now(), "Token is refreshed successfully!"));
+                    })
+                    .orElseThrow(() -> new TokenRefreshException(refreshToken, "Refresh token is not in database!"));
+        }
+
+        return ResponseEntity.badRequest().body(new MessageResponse(InfoCode.TOKEN_REFRESH_FAIL, Instant.now(), "Refresh Token is empty!"));
+    }
+
 }
