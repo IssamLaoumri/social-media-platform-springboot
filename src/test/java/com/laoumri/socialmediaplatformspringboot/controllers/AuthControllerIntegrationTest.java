@@ -6,6 +6,7 @@ import com.laoumri.socialmediaplatformspringboot.dto.requests.SignupRequest;
 import com.laoumri.socialmediaplatformspringboot.entities.Role;
 import com.laoumri.socialmediaplatformspringboot.entities.User;
 import com.laoumri.socialmediaplatformspringboot.enums.EGender;
+import com.laoumri.socialmediaplatformspringboot.repositories.RefreshTokenRepository;
 import com.laoumri.socialmediaplatformspringboot.repositories.RoleRepository;
 import com.laoumri.socialmediaplatformspringboot.repositories.UserRepository;
 import com.laoumri.socialmediaplatformspringboot.shared.MockResource;
@@ -51,6 +52,9 @@ public class AuthControllerIntegrationTest {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private RefreshTokenRepository refTokenRepository;
+
     private final ObjectMapper mapper = new ObjectMapper();
     private final String API_URL_PREFIX = "/api/v1/auth";
 
@@ -58,6 +62,7 @@ public class AuthControllerIntegrationTest {
 
     @BeforeEach
     void setup() {
+        refTokenRepository.deleteAll();
         roleRepository.deleteAll();
         userRepository.deleteAll();
 
@@ -71,6 +76,7 @@ public class AuthControllerIntegrationTest {
 
     @AfterEach
     void tearDown() {
+        refTokenRepository.deleteAll();
         userRepository.deleteAll();
         roleRepository.deleteAll();
     }
