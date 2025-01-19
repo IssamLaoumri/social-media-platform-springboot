@@ -43,7 +43,7 @@ class UserServiceTest {
     @Mock
     PasswordEncoder passwordEncoder;
 
-    private static User USER_ISSAM = MockResource.getMockUserIssam();
+    private static final User USER_ISSAM = MockResource.getMockUser();
 
     @BeforeEach
     void setUp() {}

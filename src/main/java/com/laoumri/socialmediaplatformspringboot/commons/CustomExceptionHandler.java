@@ -56,6 +56,6 @@ public class CustomExceptionHandler {
 
     @ExceptionHandler(TokenRefreshException.class)
     public ResponseEntity<ErrorResponse> handleTokenRefreshException(final TokenRefreshException ex){
-        return buildErrorResponse(HttpStatus.FORBIDDEN, List.of(ex.getMessage()), ErrorCode.REFRESH_TOKEN_EXPIRED);
+        return buildErrorResponse(HttpStatus.FORBIDDEN, List.of(ex.getMessage()), ex.getErrorCode());
     }
 }

@@ -6,6 +6,7 @@ import com.laoumri.socialmediaplatformspringboot.dto.responses.AuthResponse;
 import com.laoumri.socialmediaplatformspringboot.dto.responses.MessageResponse;
 import com.laoumri.socialmediaplatformspringboot.entities.RefreshToken;
 import com.laoumri.socialmediaplatformspringboot.entities.User;
+import com.laoumri.socialmediaplatformspringboot.enums.ErrorCode;
 import com.laoumri.socialmediaplatformspringboot.enums.InfoCode;
 import com.laoumri.socialmediaplatformspringboot.exceptions.TokenRefreshException;
 import com.laoumri.socialmediaplatformspringboot.security.services.JwtService;
@@ -116,10 +117,10 @@ public class AuthController {
                                 .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
                                 .body(new MessageResponse(InfoCode.TOKEN_REFRESH_SUCCESS, Instant.now(), "Token is refreshed successfully!"));
                     })
-                    .orElseThrow(() -> new TokenRefreshException(refreshToken, "Refresh token is not in database!"));
+                    .orElseThrow(() -> new TokenRefreshException(refreshToken, "Refresh token is not in database!", ErrorCode.REFRESH_TOKEN_FAIL));
         }
 
-        return ResponseEntity.badRequest().body(new MessageResponse(InfoCode.TOKEN_REFRESH_FAIL, Instant.now(), "Refresh Token is empty!"));
+        throw new TokenRefreshException(refreshToken, "Refresh Token is empty!", ErrorCode.REFRESH_TOKEN_FAIL);
     }
 
 }

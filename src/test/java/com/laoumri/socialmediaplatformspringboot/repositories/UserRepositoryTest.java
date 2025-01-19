@@ -24,7 +24,7 @@ class UserRepositoryTest {
     @Autowired
     UserRepository userRepository;
 
-    private final User USER_ISSAM = MockResource.getMockUserIssam();
+    private final User USER_ISSAM = MockResource.getMockUser();
 
     @BeforeEach
     void setup(){

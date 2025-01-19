@@ -2,6 +2,7 @@ package com.laoumri.socialmediaplatformspringboot.services;
 
 import com.laoumri.socialmediaplatformspringboot.entities.RefreshToken;
 import com.laoumri.socialmediaplatformspringboot.entities.User;
+import com.laoumri.socialmediaplatformspringboot.enums.ErrorCode;
 import com.laoumri.socialmediaplatformspringboot.exceptions.TokenRefreshException;
 import com.laoumri.socialmediaplatformspringboot.exceptions.UserNotFoundException;
 import com.laoumri.socialmediaplatformspringboot.repositories.RefreshTokenRepository;
@@ -57,7 +58,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     public RefreshToken verifyExpiration(RefreshToken token) {
         if (token.getExpiresAt().compareTo(Instant.now()) < 0) {
             refreshTokenRepository.delete(token);
-            throw new TokenRefreshException(token.getToken(), "Refresh token was expired. Please make a new signin request");
+            throw new TokenRefreshException(token.getToken(), "Refresh token was expired. Please make a new signin request", ErrorCode.REFRESH_TOKEN_EXPIRED);
         }
 
         return token;

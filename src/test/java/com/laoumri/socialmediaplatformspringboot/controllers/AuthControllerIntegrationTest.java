@@ -3,13 +3,17 @@ package com.laoumri.socialmediaplatformspringboot.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.laoumri.socialmediaplatformspringboot.dto.requests.SigninRequest;
 import com.laoumri.socialmediaplatformspringboot.dto.requests.SignupRequest;
+import com.laoumri.socialmediaplatformspringboot.entities.RefreshToken;
 import com.laoumri.socialmediaplatformspringboot.entities.Role;
 import com.laoumri.socialmediaplatformspringboot.entities.User;
 import com.laoumri.socialmediaplatformspringboot.enums.EGender;
+import com.laoumri.socialmediaplatformspringboot.enums.ErrorCode;
+import com.laoumri.socialmediaplatformspringboot.enums.InfoCode;
 import com.laoumri.socialmediaplatformspringboot.repositories.RefreshTokenRepository;
 import com.laoumri.socialmediaplatformspringboot.repositories.RoleRepository;
 import com.laoumri.socialmediaplatformspringboot.repositories.UserRepository;
 import com.laoumri.socialmediaplatformspringboot.shared.MockResource;
+import jakarta.servlet.http.Cookie;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,6 +44,9 @@ public class AuthControllerIntegrationTest {
     @Value("${jwt.cookieName}")
     private String cookieName;
 
+    @Value("${jwt.refreshCookieName}")
+    private String refreshCookieName;
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -58,7 +65,7 @@ public class AuthControllerIntegrationTest {
     private final ObjectMapper mapper = new ObjectMapper();
     private final String API_URL_PREFIX = "/api/v1/auth";
 
-    private final User userIssam = MockResource.getMockUserIssam();
+    private final User userIssam = MockResource.getMockUser();
 
     @BeforeEach
     void setup() {
@@ -70,7 +77,7 @@ public class AuthControllerIntegrationTest {
         Role roleAdmin = roleRepository.save(MockResource.getRoleAdmin());
 
         userIssam.setPassword(passwordEncoder.encode(userIssam.getPassword()));
-        userIssam.setRoles(Set.of(roleUser,roleAdmin));
+        userIssam.setRoles(Set.of(roleUser, roleAdmin));
         userRepository.save(userIssam);
     }
 
@@ -117,6 +124,7 @@ public class AuthControllerIntegrationTest {
                 .gender(EGender.MALE)
                 .build();
         String requestJson = mapper.writeValueAsString(request);
+
         mockMvc.perform(post(API_URL_PREFIX + "/signup")
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding("utf-8")
@@ -142,6 +150,65 @@ public class AuthControllerIntegrationTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.email").value(userIssam.getUsername()))
+                .andExpect(cookie().exists(cookieName))
+                .andExpect(cookie().exists(refreshCookieName));
+    }
+
+    @Test
+    void logout() throws Exception {
+        mockMvc.perform(post(API_URL_PREFIX + "/signout")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding("utf-8")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(cookie().value(cookieName, ""))
+                .andExpect(cookie().value(refreshCookieName, ""));
+    }
+
+    // Tests for /refreshtoken
+
+    @Test
+    void shouldRefreshToken_whenValidRefreshTokenProvided() throws Exception {
+        RefreshToken refreshToken = refTokenRepository.save(MockResource.getMockRefreshToken(userIssam));
+
+        mockMvc.perform(post(API_URL_PREFIX + "/refreshtoken")
+                        .cookie(new Cookie(refreshCookieName, refreshToken.getToken()))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value(InfoCode.TOKEN_REFRESH_SUCCESS.toString()))
                 .andExpect(cookie().exists(cookieName));
+    }
+
+    @Test
+    void shouldReturnError_whenRefreshTokenIsExpired() throws Exception {
+        RefreshToken expiredToken = MockResource.getMockExpiredRefreshToken(userIssam);
+        refTokenRepository.save(expiredToken);
+
+        mockMvc.perform(post(API_URL_PREFIX + "/refreshtoken")
+                        .cookie(new Cookie(refreshCookieName, expiredToken.getToken()))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.errorCode").value(ErrorCode.REFRESH_TOKEN_EXPIRED.toString()));
+    }
+
+    @Test
+    void shouldReturnError_whenRefreshTokenIsInvalid() throws Exception {
+        mockMvc.perform(post(API_URL_PREFIX + "/refreshtoken")
+                        .cookie(new Cookie(refreshCookieName, "invalid-token"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.errorCode").value(ErrorCode.REFRESH_TOKEN_FAIL.toString()));
+    }
+
+    @Test
+    void shouldReturnError_whenNoRefreshTokenProvided() throws Exception {
+        mockMvc.perform(post(API_URL_PREFIX + "/refreshtoken")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.errorCode").value(ErrorCode.REFRESH_TOKEN_FAIL.toString()));
     }
 }
