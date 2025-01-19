@@ -13,7 +13,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class TokenRefreshException extends RuntimeException{
-    private ErrorCode errorCode;
+    private final ErrorCode errorCode;
     public TokenRefreshException(String token, String message, ErrorCode errorCode) {
         super(String.format("Failed for [%s]: %s", token, message));
         this.errorCode = errorCode;
