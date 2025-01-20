@@ -1,6 +1,6 @@
 package com.laoumri.socialmediaplatformspringboot.dto.responses;
 
-import com.laoumri.socialmediaplatformspringboot.enums.ErrorCode;
+import com.laoumri.socialmediaplatformspringboot.enums.Code;
 import lombok.*;
 import org.springframework.http.HttpStatus;
 
@@ -17,7 +17,7 @@ public class ErrorResponse {
     private HttpStatus status;
     private String reason;
     private List<String> message;
-    private ErrorCode errorCode;
+    private Code code;
 
     private Instant timestamp;
 }

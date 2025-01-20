@@ -7,8 +7,7 @@ import com.laoumri.socialmediaplatformspringboot.entities.RefreshToken;
 import com.laoumri.socialmediaplatformspringboot.entities.Role;
 import com.laoumri.socialmediaplatformspringboot.entities.User;
 import com.laoumri.socialmediaplatformspringboot.enums.EGender;
-import com.laoumri.socialmediaplatformspringboot.enums.ErrorCode;
-import com.laoumri.socialmediaplatformspringboot.enums.InfoCode;
+import com.laoumri.socialmediaplatformspringboot.enums.TokenCode;
 import com.laoumri.socialmediaplatformspringboot.repositories.RefreshTokenRepository;
 import com.laoumri.socialmediaplatformspringboot.repositories.RoleRepository;
 import com.laoumri.socialmediaplatformspringboot.repositories.UserRepository;
@@ -176,7 +175,7 @@ public class AuthControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.message").value(InfoCode.TOKEN_REFRESH_SUCCESS.toString()))
+                .andExpect(jsonPath("$.message").value(TokenCode.TOKEN_REFRESH_SUCCESS.toString()))
                 .andExpect(cookie().exists(cookieName));
     }
 
@@ -190,7 +189,7 @@ public class AuthControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isForbidden())
-                .andExpect(jsonPath("$.errorCode").value(ErrorCode.REFRESH_TOKEN_EXPIRED.toString()));
+                .andExpect(jsonPath("$.errorCode").value(TokenCode.REFRESH_TOKEN_EXPIRED.toString()));
     }
 
     @Test
@@ -200,7 +199,7 @@ public class AuthControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isForbidden())
-                .andExpect(jsonPath("$.errorCode").value(ErrorCode.REFRESH_TOKEN_FAIL.toString()));
+                .andExpect(jsonPath("$.errorCode").value(TokenCode.REFRESH_TOKEN_FAIL.toString()));
     }
 
     @Test
@@ -209,6 +208,6 @@ public class AuthControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isForbidden())
-                .andExpect(jsonPath("$.errorCode").value(ErrorCode.REFRESH_TOKEN_FAIL.toString()));
+                .andExpect(jsonPath("$.errorCode").value(TokenCode.REFRESH_TOKEN_FAIL.toString()));
     }
 }

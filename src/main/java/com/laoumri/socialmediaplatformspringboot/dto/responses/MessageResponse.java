@@ -1,6 +1,6 @@
 package com.laoumri.socialmediaplatformspringboot.dto.responses;
 
-import com.laoumri.socialmediaplatformspringboot.enums.InfoCode;
+import com.laoumri.socialmediaplatformspringboot.enums.Code;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,7 +18,7 @@ import java.time.Instant;
 @Setter
 @AllArgsConstructor
 public class MessageResponse {
-    private InfoCode message;
+    private Code code;
     private Instant timestamp;
     private Object data;
 }

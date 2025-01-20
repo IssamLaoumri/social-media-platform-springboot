@@ -1,6 +1,6 @@
 package com.laoumri.socialmediaplatformspringboot.exceptions;
 
-import com.laoumri.socialmediaplatformspringboot.enums.ErrorCode;
+import com.laoumri.socialmediaplatformspringboot.enums.Code;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,8 +13,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class TokenRefreshException extends RuntimeException{
-    private final ErrorCode errorCode;
-    public TokenRefreshException(String token, String message, ErrorCode errorCode) {
+    private final Code errorCode;
+    public TokenRefreshException(String token, String message, Code errorCode) {
         super(String.format("Failed for [%s]: %s", token, message));
         this.errorCode = errorCode;
     }

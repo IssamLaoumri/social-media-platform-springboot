@@ -6,8 +6,8 @@ import com.laoumri.socialmediaplatformspringboot.dto.responses.AuthResponse;
 import com.laoumri.socialmediaplatformspringboot.dto.responses.MessageResponse;
 import com.laoumri.socialmediaplatformspringboot.entities.RefreshToken;
 import com.laoumri.socialmediaplatformspringboot.entities.User;
-import com.laoumri.socialmediaplatformspringboot.enums.ErrorCode;
-import com.laoumri.socialmediaplatformspringboot.enums.InfoCode;
+import com.laoumri.socialmediaplatformspringboot.enums.TokenCode;
+import com.laoumri.socialmediaplatformspringboot.enums.UserCode;
 import com.laoumri.socialmediaplatformspringboot.exceptions.TokenRefreshException;
 import com.laoumri.socialmediaplatformspringboot.security.services.JwtService;
 import com.laoumri.socialmediaplatformspringboot.services.RefreshTokenService;
@@ -76,7 +76,7 @@ public class AuthController {
                 .roles(roles)
                 .build();
 
-        MessageResponse message = new MessageResponse(InfoCode.LOGIN_SUCCESS, Instant.now(), response);
+        MessageResponse message = new MessageResponse(UserCode.LOGIN_SUCCESS, Instant.now(), response);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -99,7 +99,7 @@ public class AuthController {
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
                 .header(HttpHeaders.SET_COOKIE, jwtRefreshCookie.toString())
-                .body(new MessageResponse(InfoCode.SIGNED_OUT, Instant.now(), "You've been signed out!"));
+                .body(new MessageResponse(UserCode.SIGNED_OUT, Instant.now(), "You've been signed out!"));
     }
 
     @PostMapping("/refreshtoken")
@@ -115,12 +115,12 @@ public class AuthController {
 
                         return ResponseEntity.ok()
                                 .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
-                                .body(new MessageResponse(InfoCode.TOKEN_REFRESH_SUCCESS, Instant.now(), "Token is refreshed successfully!"));
+                                .body(new MessageResponse(TokenCode.TOKEN_REFRESH_SUCCESS, Instant.now(), "Token is refreshed successfully!"));
                     })
-                    .orElseThrow(() -> new TokenRefreshException(refreshToken, "Refresh token is not in database!", ErrorCode.REFRESH_TOKEN_FAIL));
+                    .orElseThrow(() -> new TokenRefreshException(refreshToken, "Refresh token is not in database!", TokenCode.REFRESH_TOKEN_FAIL));
         }
 
-        throw new TokenRefreshException(refreshToken, "Refresh Token is empty!", ErrorCode.REFRESH_TOKEN_FAIL);
+        throw new TokenRefreshException(refreshToken, "Refresh Token is empty!", TokenCode.REFRESH_TOKEN_FAIL);
     }
 
 }

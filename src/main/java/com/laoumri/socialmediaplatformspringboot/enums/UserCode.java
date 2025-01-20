@@ -1,12 +1,10 @@
 package com.laoumri.socialmediaplatformspringboot.enums;
 
-public enum ErrorCode {
+public enum UserCode implements Code {
+    LOGIN_SUCCESS,
+    SIGNED_OUT,
     EMAIL_ALREADY_EXISTS,
     USER_NOT_FOUND,
     ROLE_NOT_FOUND,
-
-    VALIDATION_ERROR,
-
-    REFRESH_TOKEN_EXPIRED,
-    REFRESH_TOKEN_FAIL,
+    VALIDATION_ERROR
 }
