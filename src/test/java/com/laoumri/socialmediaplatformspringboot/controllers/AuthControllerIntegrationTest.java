@@ -28,6 +28,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Set;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
@@ -175,7 +176,7 @@ public class AuthControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.message").value(TokenCode.TOKEN_REFRESH_SUCCESS.toString()))
+                .andExpect(jsonPath("$.code").value(TokenCode.TOKEN_REFRESH_SUCCESS.toString()))
                 .andExpect(cookie().exists(cookieName));
     }
 
@@ -189,7 +190,7 @@ public class AuthControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isForbidden())
-                .andExpect(jsonPath("$.errorCode").value(TokenCode.REFRESH_TOKEN_EXPIRED.toString()));
+                .andExpect(jsonPath("$.code").value(TokenCode.REFRESH_TOKEN_EXPIRED.toString()));
     }
 
     @Test
@@ -199,7 +200,7 @@ public class AuthControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isForbidden())
-                .andExpect(jsonPath("$.errorCode").value(TokenCode.REFRESH_TOKEN_FAIL.toString()));
+                .andExpect(jsonPath("$.code").value(TokenCode.REFRESH_TOKEN_FAIL.toString()));
     }
 
     @Test
@@ -208,6 +209,16 @@ public class AuthControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isForbidden())
-                .andExpect(jsonPath("$.errorCode").value(TokenCode.REFRESH_TOKEN_FAIL.toString()));
+                .andExpect(jsonPath("$.code").value(TokenCode.REFRESH_TOKEN_FAIL.toString()));
+    }
+
+    @Test
+    void shouldReturnCsrfToken() throws Exception {
+        mockMvc.perform(get(API_URL_PREFIX + "/csrf-token")
+                .contentType(MediaType.APPLICATION_JSON)
+                .characterEncoding("utf-8")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.token").isNotEmpty());
     }
 }
