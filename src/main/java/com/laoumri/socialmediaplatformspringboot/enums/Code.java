@@ -1,3 +1,5 @@
 package com.laoumri.socialmediaplatformspringboot.enums;
 
-public interface Code { }
+import java.io.Serializable;
+
+public interface Code extends Serializable { }
