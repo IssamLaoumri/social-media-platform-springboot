@@ -4,6 +4,7 @@ import com.laoumri.socialmediaplatformspringboot.security.filters.AuthTokenFilte
 import com.laoumri.socialmediaplatformspringboot.security.services.UserDetailsServiceImpl;
 import com.laoumri.socialmediaplatformspringboot.security.utils.JwtAuthEntryPoint;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.web.server.Cookie;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -34,7 +35,7 @@ public class WebSecurityConfiguration {
         return http
                 .csrf(csrf-> csrf
                         .ignoringRequestMatchers("/api/v1/auth/**")
-                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                        .csrfTokenRepository(csrfTokenRepository())
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtAuthEntryPoint))
@@ -76,11 +77,18 @@ public class WebSecurityConfiguration {
         return request -> {
             CorsConfiguration config = new CorsConfiguration();
             config.setAllowCredentials(true);
-            config.setAllowedOrigins(Collections.singletonList("*"));
+            config.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
             config.setAllowedHeaders(Collections.singletonList("*"));
             config.setAllowedMethods(Collections.singletonList("*"));
             config.setMaxAge(3600L);
             return config;
         };
+    }
+
+    @Bean
+    public CookieCsrfTokenRepository csrfTokenRepository(){
+        final CookieCsrfTokenRepository repo = CookieCsrfTokenRepository.withHttpOnlyFalse();
+        repo.setCookieCustomizer((x) -> x.sameSite(Cookie.SameSite.NONE.attributeValue()));
+        return repo;
     }
 }

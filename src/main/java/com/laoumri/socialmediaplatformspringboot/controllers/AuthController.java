@@ -76,10 +76,14 @@ public class AuthController {
 
         MessageResponse message = new MessageResponse(UserCode.LOGIN_SUCCESS, Instant.now(), response);
 
+        // HEADERS
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.SET_COOKIE, jwtCookie.toString());
+        headers.add(HttpHeaders.SET_COOKIE, jwtRefreshToken.toString());
+
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
-                .header(HttpHeaders.SET_COOKIE, jwtRefreshToken.toString())
+                .headers(headers)
                 .body(message);
     }
 
